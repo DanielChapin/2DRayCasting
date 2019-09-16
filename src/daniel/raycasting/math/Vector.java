@@ -1,12 +1,20 @@
 package daniel.raycasting.math;
 
+import java.awt.Point;
+
+import daniel.raycasting.boundaries.Wall;
+
 public class Vector {
 	
-	float x, y;
+	public double x, y;
 	
-	public Vector(float x, float y) {
+	public Vector(double x, double y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	public static Vector fromAngle(double angle) {
+		return new Vector(Math.cos(angle), Math.sin(angle));
 	}
 	
 	public void normalize() {
@@ -14,5 +22,11 @@ public class Vector {
 		x /= norm;
 		y /= norm;
 	}
-
+	
+	public Point getIntersection(Wall[] walls) {
+		for (Wall w : walls)
+			System.out.println(w.a);
+		return null;
+	}
+	
 }

@@ -12,11 +12,17 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
+import daniel.raycasting.boundaries.Wall;
+import daniel.raycasting.math.Vector;
+
 public class Main extends JFrame implements MouseListener, MouseMotionListener {
 	
 	Canvas canvas = new Canvas();
 	
 	Point mouseLocation = new Point(10, 10);
+	
+	Vector[] vectors = new Vector[360];
+	Wall[] walls = new Wall[5];
 
 	public static void main(String[] args) {
 		new Main();
@@ -30,7 +36,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 		setLocationRelativeTo(null);
 		setTitle("Light");
 		setBackground(Color.BLACK);
-		setForeground(Color.CYAN);
+		setForeground(Color.getHSBColor(0f, 0f, 0.85f));
 		setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 16));
 		
 		add(canvas);
@@ -40,6 +46,21 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 		canvas.addMouseMotionListener(this);
 		
 		setVisible(true);
+		
+		mouseLocation = getRandomPoint();
+		for (int i = 0; i < vectors.length; i++) {
+			double a = 2 * Math.PI * ((double) i / vectors.length);
+			vectors[i] = Vector.fromAngle(a);
+			vectors[i].normalize();
+		}
+		walls = new Wall[walls.length + 4];
+		walls[0] = getBorderWall(0, 0, 1, 0);
+		walls[1] = getBorderWall(1, 0, 1, 1);
+		walls[2] = getBorderWall(1, 1, 0, 1);
+		walls[3] = getBorderWall(0, 1, 0, 0);
+		for (int i = 4; i < walls.length; i++)
+			walls[i] = new Wall(getRandomPoint(), getRandomPoint());
+		
 		canvas.createBufferStrategy(3);
 		startRendering();
 	}
@@ -61,9 +82,21 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(getForeground());
-		
+		for (Vector v : vectors)
+			g.drawLine(mouseLocation.x, mouseLocation.y, mouseLocation.x + (int) (v.x), mouseLocation.y + (int) (v.y));
+		for (Wall w : walls)
+			w.render(g);
 		g.dispose();
 		bufferStrategy.show();
+	}
+	
+	Point getRandomPoint() {
+		return new Point((int) (Math.random() * canvas.getWidth()), (int) (Math.random() * canvas.getHeight()));
+	}
+	
+	Wall getBorderWall(int x1, int y1, int x2, int y2) {
+		int width = canvas.getWidth() - 1, height = canvas.getHeight() - 1;
+		return new Wall(x1 * width, y1 * height, x2 * width, y2 * height);
 	}
 	
 	@Override
