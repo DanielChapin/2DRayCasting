@@ -13,6 +13,7 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 import daniel.raycasting.boundaries.Wall;
+import daniel.raycasting.math.Ray;
 import daniel.raycasting.math.Vector;
 
 public class Main extends JFrame implements MouseListener, MouseMotionListener {
@@ -21,7 +22,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 	
 	Point mouseLocation = new Point(10, 10);
 	
-	Vector[] vectors = new Vector[360];
+	Ray[] rays = new Ray[2];
 	Wall[] walls = new Wall[5];
 
 	public static void main(String[] args) {
@@ -48,10 +49,9 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 		setVisible(true);
 		
 		mouseLocation = getRandomPoint();
-		for (int i = 0; i < vectors.length; i++) {
-			double a = 2 * Math.PI * ((double) i / vectors.length);
-			vectors[i] = Vector.fromAngle(a);
-			vectors[i].normalize();
+		for (int i = 0; i < rays.length; i++) {
+			double a = 2 * Math.PI * ((double) i / rays.length);
+			rays[i] = new Ray(mouseLocation, Vector.fromAngle(a));
 		}
 		walls = new Wall[walls.length + 4];
 		walls[0] = getBorderWall(0, 0, 1, 0);
@@ -82,8 +82,11 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(getForeground());
-		for (Vector v : vectors)
-			g.drawLine(mouseLocation.x, mouseLocation.y, mouseLocation.x + (int) (v.x), mouseLocation.y + (int) (v.y));
+		for (Ray r : rays) {
+//			g.drawLine(mouseLocation.x, mouseLocation.y, mouseLocation.x + (int) (r.direction.x * 200), mouseLocation.y + (int) (r.direction.y * 200));
+			Point intersect = r.getIntersection(walls);
+			g.drawLine(r.position.x, r.position.y, intersect.x, intersect.y);
+		}
 		for (Wall w : walls)
 			w.render(g);
 		g.dispose();
@@ -127,6 +130,8 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mouseLocation = e.getPoint();
+		for (Ray r : rays) 
+			r.position = mouseLocation;
 	}
 
 }

@@ -1,9 +1,5 @@
 package daniel.raycasting.math;
 
-import java.awt.Point;
-
-import daniel.raycasting.boundaries.Wall;
-
 public class Vector {
 	
 	public double x, y;
@@ -14,7 +10,9 @@ public class Vector {
 	}
 	
 	public static Vector fromAngle(double angle) {
-		return new Vector(Math.cos(angle), Math.sin(angle));
+		Vector vector = new Vector(Math.cos(angle), Math.sin(angle));
+		vector.normalize();
+		return vector;
 	}
 	
 	public void normalize() {
