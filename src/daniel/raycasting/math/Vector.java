@@ -23,10 +23,4 @@ public class Vector {
 		y /= norm;
 	}
 	
-	public Point getIntersection(Wall[] walls) {
-		for (Wall w : walls)
-			System.out.println(w.a);
-		return null;
-	}
-	
 }
