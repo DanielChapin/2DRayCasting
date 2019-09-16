@@ -22,8 +22,8 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener {
 	
 	Point mouseLocation = new Point(10, 10);
 	
-	Ray[] rays = new Ray[2];
-	Wall[] walls = new Wall[5];
+	Ray[] rays = new Ray[36];
+	Wall[] walls = new Wall[1];
 
 	public static void main(String[] args) {
 		new Main();
